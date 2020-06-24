@@ -11,6 +11,7 @@ class SignUp extends React.Component {
             lastname: "",
             // submit: false
         };
+
     }
 
     changeHandler = (e) => {
@@ -33,7 +34,19 @@ class SignUp extends React.Component {
     handleSubmit = (e) => {
         // this.setState({ submit: true });
         e.preventDefault()
-        console.log(JSON.stringify(this.state))
+        fetch("/auth/signup",
+            {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                body: JSON.stringify(this.state),
+            })
+            .then(res => res.json())
+            .then(
+                res => this.setState({ "flash": res.flash }),
+                err => this.setState({ "flash": err.flash })
+            )
     }
 
     render() {
