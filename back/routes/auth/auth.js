@@ -18,7 +18,6 @@ router.post('/signup', function (req, res, next) {
     const sql = 'INSERT INTO users SET ?';
     connection.query(sql, formdata, (error, results) => {
         if (error) {
-            console.log(error)
             res.status(500).json({ flash: error.message });
         } else
             res.status(200).json({ flash: "User has been signed up!" });

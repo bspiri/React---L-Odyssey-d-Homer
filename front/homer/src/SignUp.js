@@ -9,7 +9,7 @@ class SignUp extends React.Component {
             passwordbis: '',
             name: "",
             lastname: "",
-            // submit: false
+            flash: ""
         };
 
     }
@@ -32,7 +32,7 @@ class SignUp extends React.Component {
         }
     }
     handleSubmit = (e) => {
-        // this.setState({ submit: true });
+        console.log('A form was submitted: ' + JSON.stringify(this.state, 1, 1));
         e.preventDefault()
         fetch("/auth/signup",
             {
@@ -51,7 +51,8 @@ class SignUp extends React.Component {
 
     render() {
         return (<div>
-            <h1>{this.state.email} {this.state.password} {this.state.passwordbis} {this.state.name} {this.state.lastname} {this.state.submit}</h1>
+            <h1>{JSON.stringify(this.state, 1, 1)}</h1>
+            <h2>{this.state.flash}</h2>
             <form onSubmit={this.handleSubmit}>
                 <label htmlFor="email">E-mail Address</label>
                 <input onChange={this.changeHandler} type="email" name='email' value={this.state.email} />
@@ -65,7 +66,7 @@ class SignUp extends React.Component {
                 <input onChange={this.changeHandler} type="text" name='lastname' value={this.state.lastname} />
                 <input type="submit" value="submit" />
             </form>
-        </div>);
+        </div>)
     }
 }
 export default SignUp;
