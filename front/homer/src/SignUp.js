@@ -1,4 +1,7 @@
 import React from 'react';
+import { Button, Snackbar, TextField, Grid } from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
+// import SnackBar from "./SnackBar";
 
 class SignUp extends React.Component {
     constructor() {
@@ -9,9 +12,10 @@ class SignUp extends React.Component {
             passwordbis: '',
             name: "",
             lastname: "",
-            flash: ""
+            flash: "",
+            isSnackbarOpen: false,
+            SnackbarStatus: ""
         };
-
     }
 
     changeHandler = (e) => {
@@ -31,10 +35,11 @@ class SignUp extends React.Component {
             this.setState({ passwordbis: e.target.value });
         }
     }
+
     handleSubmit = (e) => {
         console.log('A form was submitted: ' + JSON.stringify(this.state, 1, 1));
         e.preventDefault()
-        fetch("/auth/signup",
+        fetch("auth/signup",
             {
                 method: 'POST',
                 headers: new Headers({
@@ -42,31 +47,65 @@ class SignUp extends React.Component {
                 }),
                 body: JSON.stringify(this.state),
             })
-            .then(res => res.json())
-            .then(
-                res => this.setState({ "flash": res.flash }),
-                err => this.setState({ "flash": err.flash })
-            )
+            .then(res => {
+
+                // statusColor diye default olarak success ekleyelim.
+                let statusColor = 'success';
+                if (res.status == 400) {
+                    // http 400 gelmisse error a cevirelim
+                    statusColor = 'error';
+                }
+
+                // gelen server cevabini (res) json a cevirelim
+                res.json().then(resp => {
+
+                    // json a cevirdikten sonra elimizde yukarida tanimladigimiz statusColor olacak.
+                    this.setState({ "flash": resp.flash, SnackbarStatus: statusColor, "isSnackbarOpen": true })
+                });
+            })
     }
 
+    handleClose = () => {
+        this.setState({ isSnackbarOpen: false })
+    }
     render() {
         return (<div>
-            <h1>{JSON.stringify(this.state, 1, 1)}</h1>
-            <h2>{this.state.flash}</h2>
+            <h2>Sign up!</h2>
+            {this.state.SnackbarStatus}
             <form onSubmit={this.handleSubmit}>
-                <label htmlFor="email">E-mail Address</label>
-                <input onChange={this.changeHandler} type="email" name='email' value={this.state.email} />
-                <label htmlFor="password">password</label>
-                <input onChange={this.changeHandler} type="password" name='password' value={this.state.password} />
-                <label htmlFor="passwordbis">verify password</label>
-                <input onChange={this.changeHandler} type="password" name='passwordbis' value={this.state.passwordbis} />
-                <label htmlFor="name">name</label>
-                <input onChange={this.changeHandler} type="text" name='name' value={this.state.name} />
-                <label htmlFor="lastname">last name</label>
-                <input onChange={this.changeHandler} type="text" name='lastname' value={this.state.lastname} />
-                <input type="submit" value="submit" />
+                <Grid container alignItems="center" justify="center" style={{ height: "100%" }}>
+                    <Grid item xs={12} style={{ paddingRight: "20px" }} >
+                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
+                            fullWidth label="Email" type="email" name='email' value={this.state.email} />
+                    </Grid>
+                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
+                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
+                            fullWidth label="Password" type="password" name='password' value={this.state.password} />
+                    </Grid>
+                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
+                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
+                            fullWidth label="Verify password" type="password" name='passwordbis' value={this.state.passwordbis} />
+                    </Grid>
+                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
+                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
+                            fullWidth label="Name" type="text" name='name' value={this.state.name} />
+                    </Grid>
+                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
+                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
+                            fullWidth label="Last name" type="text" name='lastname' value={this.state.lastname} />
+                    </Grid>
+                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
+                        <Button style={{ float: "right" }} variant="contained" color="primary" type="submit" value="Submit">Submit</Button>
+                    </Grid>
+                </Grid>
             </form>
-        </div>)
+            <Snackbar open={this.state.isSnackbarOpen} autoHideDuration={3000} onClose={this.handleClose}>
+                <Alert onClose={this.handleClose} severity={this.state.SnackbarStatus}>
+                    {this.state.flash}
+                </Alert>
+            </Snackbar>
+
+        </div >)
     }
 }
 export default SignUp;
