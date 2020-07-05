@@ -1,17 +1,16 @@
 import React from 'react';
 import { Button, Snackbar, TextField, Grid } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
+import { Link } from "react-router-dom";
 // import SnackBar from "./SnackBar";
 
-class SignUp extends React.Component {
+class SignIn extends React.Component {
     constructor() {
         super()
         this.state = {
             email: "",
             password: "",
             passwordbis: '',
-            name: "",
-            lastname: "",
             flash: "",
             isSnackbarOpen: false,
             SnackbarStatus: ""
@@ -24,10 +23,6 @@ class SignUp extends React.Component {
             this.setState({ email: e.target.value });
         } else if (e.target.name === 'password') {
             this.setState({ password: e.target.value });
-        } else if (e.target.name === 'name') {
-            this.setState({ name: e.target.value });
-        } else if (e.target.name === 'lastname') {
-            this.setState({ lastname: e.target.value });
         } else if (e.target.name === 'passwordbis') {
             // if (e.target.value !== this.state.password) {
             //     console.log('password does not match')
@@ -37,9 +32,9 @@ class SignUp extends React.Component {
     }
 
     handleSubmit = (e) => {
-        console.log('A form was submitted: ' + JSON.stringify(this.state, 1, 1));
+        console.log('Signin form was submitted: ' + JSON.stringify(this.state, 1, 1));
         e.preventDefault()
-        fetch("auth/signup",
+        fetch("auth/signin",
             {
                 method: 'POST',
                 headers: new Headers({
@@ -51,7 +46,7 @@ class SignUp extends React.Component {
 
                 // statusColor diye default olarak success ekleyelim.
                 let statusColor = 'success';
-                if (res.status == 400) {
+                if (res.status === 400) {
                     // http 400 gelmisse error a cevirelim
                     statusColor = 'error';
                 }
@@ -70,7 +65,8 @@ class SignUp extends React.Component {
     }
     render() {
         return (<div>
-            <h2>Sign up!</h2>
+            <Link to="/signup">Sign up</Link>
+            <h2>Sign in!</h2>
             {this.state.SnackbarStatus}
             <form onSubmit={this.handleSubmit}>
                 <Grid container alignItems="center" justify="center" style={{ height: "100%" }}>
@@ -87,14 +83,7 @@ class SignUp extends React.Component {
                             fullWidth label="Verify password" type="password" name='passwordbis' value={this.state.passwordbis} />
                     </Grid>
                     <Grid item xs={12} style={{ paddingRight: "20px" }}>
-                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
-                            fullWidth label="Name" type="text" name='name' value={this.state.name} />
-                    </Grid>
-                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
-                        <TextField onChange={this.changeHandler} style={{ marginBottom: "10px" }}
-                            fullWidth label="Last name" type="text" name='lastname' value={this.state.lastname} />
-                    </Grid>
-                    <Grid item xs={12} style={{ paddingRight: "20px" }}>
+                        <Link to="/profile">Profile</Link>
                         <Button style={{ float: "right" }} variant="contained" color="primary" type="submit" value="Submit">Submit</Button>
                     </Grid>
                 </Grid>
@@ -108,4 +97,4 @@ class SignUp extends React.Component {
         </div >)
     }
 }
-export default SignUp;
+export default SignIn;
