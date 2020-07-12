@@ -19,6 +19,6 @@ A full stack responsive web application from scratch, comprised of milestones as
 - Node.js
 - Express.js
 - React router
-- Express router
-- Body-parser
+- Express.js router
+- body-parser
 - http-proxy-middleware
