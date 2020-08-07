@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const connection = require('../../helpers/db.js');
+const bcrypt = require('bcrypt')
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy;
+const jwt = require('jsonwebtoken');
+const passportJWT = require("passport-jwt");
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJwt = passportJWT.ExtractJwt;
 const proxy = require('./setupProxy');
-// const { request } = require('express');
 
 router.post('/signup', function (req, res, next) {
     const formdata = {
@@ -20,5 +26,30 @@ router.post('/signup', function (req, res, next) {
         }
     });
 });
+
+router.post('/signin', (req, res) => {
+
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).send(err)
+        }
+        if (!user) {
+            return res.status(400).json({ message: info.flash });
+        }
+        const token = jwt.sign(JSON.stringify(user), 'your_jwt_secret');
+        return res.json({ user, token });
+    })(req, res)
+})
+
+passport.use(new JWTStrategy({
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: 'your_jwt_secret'
+},
+
+    function (jwtPayload, cb) {
+        return cb(null, jwtPayload);
+    }
+));
 
 module.exports = router;
